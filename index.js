@@ -178,6 +178,9 @@ app.get('/api/get_visit', (req, res) => {
     res.json(visit)
 })
 
+app.get('/', (req, res) => {
+    res.end('<h1>Работает...</h1>')
+})
 
 
 
@@ -199,7 +202,8 @@ app.get('/api/get_visit', (req, res) => {
 
 
 
+let PORT = process.env.PORT | 5000
 
-app.listen(5000, () => {
+app.listen(PORT, () => {
     console.log('Working...');
 })
