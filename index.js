@@ -30,7 +30,13 @@ app.get('/api/get_question', (req, res) => {
 
 
 app.get('/api/download', (req, res) => {
-    const file = `${__dirname}/certificates/${req.query.name}.jpg`;
+    let file;
+
+    if (req.query.name == 'Эмин Х' || req.query.name === 'Эмин Г')
+        file = `${__dirname}/certificates/Эмин.jpg`;
+    else
+        file = `${__dirname}/certificates/${req.query.name}.jpg`;
+
     res.download(file);
 })
 
@@ -54,7 +60,10 @@ app.put('/api/change_finish_state', (req, res) => {
 
 
 app.get('/', (req, res) => {
-    res.send('Working...')
+    connection.query('SELECT * FROM user', (error, rows, fields) => {
+        console.log(rows);
+        res.json(rows)
+    }) 
 })
 
 
