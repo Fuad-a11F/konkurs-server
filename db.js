@@ -2,9 +2,9 @@ const mysql = require('mysql')
 
 var db_config = {
     host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'konkurs'
+    user: 'fuadfu63_konkurs',
+    password: 'I*9bQ23viU',
+    database: 'fuadfu63_konkurs'
   };
   
 let connection = null;
