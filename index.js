@@ -10,87 +10,8 @@ app.use(bodyParser.json())
 app.use(cors())
 app.use(express.json())
 
-
-
 user = [
-    {
-        id: v1(),
-        name: 'req.body.person',
-        login: 'req.body.login',
-        password: '123',
-        isAdmin: true,
-        isShowName: false,
-        ball: 0,
-        present: [],
-        review: [],
-        clicker: [],
-        victory: [],
-    },
-    {
-        id: v1(),
-        name: 'Руслан',
-        login: 'req.body.login',
-        password: '1',
-        isAdmin: false,
-        isShowName: false,
-        ball: 230,
-        present: [],
-        review: [],
-        clicker: [],
-        victory: [],
-    },
-    {
-        id: v1(),
-        name: 'Эмин Х',
-        login: 'req.',
-        password: '2',
-        isAdmin: false,
-        isShowName: false,
-        ball: 40,
-        present: [],
-        review: [],
-        clicker: [],
-        victory: [],
-    },
-    {
-        id: v1(),
-        name: 'Самир',
-        login: 'req.body.',
-        password: '3',
-        isAdmin: false,
-        isShowName: false,
-        ball: 20,
-        present: [],
-        review: [],
-        clicker: [],
-        victory: [],
-    },
-    {
-        id: v1(),
-        name: 'Ильгар',
-        login: 'Ильгар',
-        password: '4',
-        isAdmin: false,
-        isShowName: false,
-        ball: 0,
-        present: [],
-        review: [],
-        clicker: [],
-        victory: [],
-    },
-    {
-        id: v1(),
-        name: 'Саид',
-        login: 'req.body32.',
-        password: '5',
-        isAdmin: false,
-        isShowName: false,
-        ball: 10,
-        present: [],
-        review: [],
-        clicker: [],
-        victory: [],
-    },
+
 ]
 
 present = [
@@ -108,7 +29,7 @@ present = [
     },
     {
         id: 3,
-        title: 'Плитка хорошего шоколад.',
+        title: 'Плитка хорошего шоколада.',
         picture: 'chocolate.svg',
         isAvailable: true
     },
@@ -153,11 +74,23 @@ present = [
         title: 'Сделаю ответы по одному предмету для сессии.',
         picture: 'sessia.svg',
         isAvailable: true
+    },
+    {
+        id: 11,
+        title: 'Чехол для телефона.',
+        picture: 'cehol.svg',
+        isAvailable: true
+    },
+    {
+        id: 12,
+        title: 'Помощь на каком-нибудь экзамене (будь то сессия, либо коллоквиум).',
+        picture: 'help.svg',
+        isAvailable: true
     }
 ]
 
 startConkurs = true
-finishConcurs = true
+finishConcurs = false
 
 
 app.post('/api/register_user', (req, res) => {
@@ -171,7 +104,7 @@ app.post('/api/register_user', (req, res) => {
             return
         }
     }
-
+    
     let user_obj = {
         id: v1(),
         name: req.body.person,
@@ -180,6 +113,7 @@ app.post('/api/register_user', (req, res) => {
         image: req.body.image,
         isAdmin: req.body.type,
         isShowName: false,
+        canFortune: true,
         ball: 0,
         present: [],
         review: [],
@@ -230,6 +164,42 @@ app.get('/api/login_user_again', (req, res) => {
     res.json('error')
 })
 
+app.put('/api/change_password', (req, res) => {
+    if (checkPass()) {
+        for (let i = 0; i < user.length; i++) {
+            if (user[i].id == req.body.id) {
+                user[i].password = req.body.new_password
+                res.json({pass: req.body.new_password, type: 'ok'})
+                return
+            }
+        }
+    }
+
+    res.json({type: 'error'})
+
+    function checkPass() {
+        for (let i = 0; i < user.length; i++) {
+            if (user[i].password === req.body.new_password) {
+                return false
+            }
+        }
+
+        return true
+    }
+})
+
+app.put('/api/change_login', (req, res) => {
+    for (let i = 0; i < user.length; i++) {
+        if (user[i].id == req.body.id) {
+            user[i].login = req.body.login
+            res.json(req.body.login)
+            return
+        }
+    }
+
+    res.json('error')
+})
+
 app.put('/api/change_is_show', (req, res) => {
     for (let i = 0; i < user.length; i++) {
         if (user[i].id === req.body.id) {
@@ -258,9 +228,11 @@ app.get('/api/get_position/:id', (req, res) => {
 
 
 
+
 app.get('/api/get_winners', (req, res) => {
     if (finishConcurs) {
-        let result = user.sort((a, b) => b.ball - a.ball)
+        let positive_user = user.filter(item => item.ball > 0)
+        let result = positive_user.sort((a, b) => b.ball - a.ball)
         let winners = []
 
         if (result[0]) winners.push(result[0])
@@ -278,7 +250,6 @@ app.get('/api/get_winners', (req, res) => {
             }
         }
 
-        console.log(winners);
         for (let i = 0; i < result.length; i++) {
             if (result[i].name === 'Нигяр' || result[i].name === 'Айсель' || result[i].name === 'Севинч') {
                 winners[2] = result[i]
@@ -292,6 +263,10 @@ app.get('/api/get_winners', (req, res) => {
 
     res.json('error')
 })
+
+
+
+
 
 app.get('/api/get_info_user', (req, res) => {
     for (let i = 0; i < user.length; i++) {
@@ -393,8 +368,8 @@ app.put('/api/check_victory_answer', (req, res) => {
                         {answer: object[6], correctAnswer: getAnswer(6), question: getQuestion(6)},
                         {answer: object[7], correctAnswer: getAnswer(7), question: getQuestion(7)},
                         {answer: object[8], correctAnswer: getAnswer(8), question: getQuestion(8)},
-                        {answer: object[9], correctAnswer: getAnswer(9), question: getQuestion(8)},
-                        {answer: object[10], correctAnswer: getAnswer(10), question: getQuestion(8)},
+                        {answer: object[9], correctAnswer: getAnswer(9), question: getQuestion(9)},
+                        {answer: object[10], correctAnswer: getAnswer(10), question: getQuestion(10)},
                     ]
 
                     user[i].victory[j]['answer'] = answer
@@ -435,6 +410,26 @@ app.get('/api/get_answer/:subject/:id', (req, res) => {
                 }
             }
         }
+    }
+})
+
+
+app.put('/api/fortuna_unavailable', (req, res) => {
+    let result = req.body.ball
+
+    for (let i = 0; i < user.length; i++) {
+        if (user[i].id === req.body.id) {
+            user[i].canFortune = false
+            user[i].ball += result
+            res.json(result)
+            return
+        }
+    }
+})
+
+app.put('/api/fortuna_available', (req, res) => {
+    for (let i = 0; i < user.length; i++) {
+        user[i].canFortune = true
     }
 })
 
@@ -619,5 +614,5 @@ app.get('/', (req, res) => {
 let PORT = process.env.PORT || 5000
 
 app.listen(PORT, () => {
-    console.log('Working...');
+    console.log('Working...', PORT);
 })
