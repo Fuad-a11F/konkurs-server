@@ -218,7 +218,8 @@ app.put('/api/change_is_show', (req, res) => {
 })
 
 app.get('/api/get_position/:id', (req, res) => {
-    let result = user.sort((a, b) => b.ball - a.ball)
+    let users = user.filter(item => !(item.isAdmin))
+    let result = users.sort((a, b) => b.ball - a.ball)
 
     for (let i = 0; i < result.length; i++) {
         if (result[i].id == req.params.id) {
