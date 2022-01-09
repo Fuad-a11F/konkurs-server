@@ -86,12 +86,17 @@ present = [
         title: 'Помощь на каком-нибудь экзамене (будь то сессия, либо коллоквиум).',
         picture: 'help.svg',
         isAvailable: true
+    },
+    {
+        id: 13,
+        title: 'На минимальном уровне могу научить программировать (создание сайтов). Расскажу в целом как это происходит все.',
+        picture: 'program.png',
+        isAvailable: true
     }
 ]
 
 startConkurs = true
 finishConcurs = false
-
 
 app.post('/api/register_user', (req, res) => {
     for (let i = 0; i < user.length; i++) {
@@ -225,10 +230,6 @@ app.get('/api/get_position/:id', (req, res) => {
     res.json('error')
 })
 
-
-
-
-
 app.get('/api/get_winners', (req, res) => {
     if (finishConcurs) {
         let positive_user = user.filter(item => item.ball > 0)
@@ -263,10 +264,6 @@ app.get('/api/get_winners', (req, res) => {
 
     res.json('error')
 })
-
-
-
-
 
 app.get('/api/get_info_user', (req, res) => {
     for (let i = 0; i < user.length; i++) {
@@ -306,8 +303,6 @@ app.get('/api/check_password', (req, res) => {
     res.json(false)
 })
 
-
-
 app.post('/api/add_clicker', (req, res) => {
     for (let i = 0; i < user.length; i++) {
         if (user[i].id == req.body.id && user[i].clicker.length < 50) {
@@ -320,8 +315,6 @@ app.post('/api/add_clicker', (req, res) => {
 
     res.json('error')
 })
-
-
 
 app.post('/api/add_victory', (req, res) => {
     for (let i = 0; i < user.length; i++) {
@@ -336,7 +329,6 @@ app.post('/api/add_victory', (req, res) => {
 
     res.json(req.body)
 })
-
 
 
 app.put('/api/check_victory_answer', (req, res) => {
@@ -413,7 +405,6 @@ app.get('/api/get_answer/:subject/:id', (req, res) => {
     }
 })
 
-
 app.put('/api/fortuna_unavailable', (req, res) => {
     let result = req.body.ball
 
@@ -433,19 +424,10 @@ app.put('/api/fortuna_available', (req, res) => {
     }
 })
 
-
-
-
-
-
-
-
-
-
-
 app.get('/api/get_start_state', (req, res) => {
     res.json({ start: startConkurs, finish: finishConcurs })
 })
+
 app.get('/api/change_finish_state', (req, res) => {
     finishConcurs = true
     res.json(1)
@@ -455,18 +437,6 @@ app.get('/api/get_question', (req, res) => {
     res.json(question[req.query.subject.replace('_', ' ')])
 }
 )
-
-
-
-
-
-
-
-
-
-
-
-
 
 app.get('/api/get_review', (req, res) => {
     let result = []
@@ -508,8 +478,6 @@ app.get('/api/check_leave_review', (req, res) => {
     res.json(false)
 })
 
-
-
 app.get('/api/get_present', (req, res) => {
     for (let i = 0; i < user.length; i++) {
         if (user[i].name === req.query.name) {
@@ -544,7 +512,6 @@ app.post('/api/add_present', (req, res) => {
             })
         }
     }
-    
 
     for (let i = 0; i < present.length; i++) {
         if (present[i].title === req.body.present) {
@@ -558,6 +525,11 @@ app.post('/api/add_present', (req, res) => {
 app.delete('/api/delete_present/:id', (req, res) => {
     for (let i = 0; i < user.length; i++) {
         if (user[i].id == req.params.id) {
+            for (let j = 0; j < present.length; j++) {
+                if (user[i].present[0].present == present[j].title) {
+                    present[j].isAvailable = true
+                }
+            }
             user[i].present = []
         }
     }
@@ -566,15 +538,8 @@ app.delete('/api/delete_present/:id', (req, res) => {
 })
 
 app.get('/api/get_all_present', (req, res) => {
-    let result = present.filter(item => item.isAvailable == 1)
-    res.json(result)
+    res.json(present)
 })
-
-
-
-
-
-
 
 app.get('/api/download', (req, res) => {
     let file;
@@ -590,16 +555,6 @@ app.get('/api/download', (req, res) => {
 app.get('/', (req, res) => {
     res.end('<h1>Работает...</h1>')
 })
-
-
-
-
-
-
-
-
-
-
 
 
 
